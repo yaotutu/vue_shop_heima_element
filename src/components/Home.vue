@@ -13,7 +13,15 @@
 
       <el-aside width="200px">
         <el-col :span="18">
-          <el-menu class="el-menu-vertical-demo" :unique-opened="true"  >
+          <el-menu
+            class="el-menu-vertical-demo"
+            :unique-opened="true"
+            :router="true"
+            :default-active="activePath"
+          >
+            <!-- router开启路由模式.index作为全局唯一id,也可作为跳转的路径. 如果出现item.id 20% 字样,
+          经排查,%20是空格的意思,item.id并没有被解析,最终排查原因是因为item.id当成字符串来处理了,
+          在index前加冒号,把item.id当作变量来解析,即可解决 -->
             <el-submenu
               :index="item.id + ' '"
               v-for="item in menuList"
@@ -29,9 +37,10 @@
               <!-- 二级菜单 -->
               <el-menu-item-group>
                 <el-menu-item
-                  index="subItem.id + ' ' "
+                  :index="'/' + subItem.path"
                   v-for="subItem in item.children"
                   :key="subItem.id"
+                  @click="saveNavState('/' + subItem.path)"
                 >
                   <i class="el-icon-menu"></i>
                   {{ subItem.authName }}
@@ -42,7 +51,7 @@
         </el-col>
       </el-aside>
       <!-- 右侧内容区域 -->
-      <el-main>Main
+      <el-main>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -56,6 +65,7 @@ export default {
   data() {
     return {
       menuList: [],
+      activePath: "",
     };
   },
   methods: {
@@ -71,9 +81,16 @@ export default {
       }
       this.menuList = res.data;
     },
+    // 保存链接的激活状态
+    saveNavState(event) {
+      // console.log('event :>> ', event);
+      window.sessionStorage.setItem("activePath", event);
+      this.activePath = event;
+    },
   },
   created() {
     this.getMenuList();
+    this.activePath = window.sessionStorage.getItem("activePath");
   },
 };
 </script>

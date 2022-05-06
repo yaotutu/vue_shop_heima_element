@@ -1,7 +1,7 @@
 import Vue from "vue";
 import {
   Button,
-  Select,
+  Card,
   Form,
   FormItem,
   Input,
@@ -14,7 +14,10 @@ import {
   Menu,
   MenuItem,
   MenuItemGroup,
-  Col
+  Col,
+  Breadcrumb,
+  BreadcrumbItem,
+  Row
 } from "element-ui";
 import App from "./App.vue";
 import router from "./router";
@@ -45,6 +48,13 @@ Vue.use(Menu);
 Vue.use(MenuItemGroup);
 Vue.use(Main);
 Vue.use(Col);
+Vue.use(Breadcrumb);
+Vue.use(BreadcrumbItem);
+Vue.use(Card);
+Vue.use(Row);
+
+
+
 
 
 // 全局挂载message组件,message与通知组件,需要全局挂载
