@@ -17,7 +17,12 @@ import {
   Col,
   Breadcrumb,
   BreadcrumbItem,
-  Row
+  Row,
+  TableColumn,
+  Table,
+  Switch,
+  Tooltip,
+  Pagination,
 } from "element-ui";
 import App from "./App.vue";
 import router from "./router";
@@ -30,11 +35,12 @@ import "./assets/fonts/iconfont.css";
 // 配置axios
 axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = window.sessionStorage.getItem('token')
-  console.log('config :>> ', config);
-  return config
-})
+  config.headers.Authorization = window.sessionStorage.getItem("token");
+  // console.log("config :>> ", config);
+  return config;
+});
 Vue.prototype.$http = axios;
+// 全局可以通过¥http来访问axios
 Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
@@ -52,10 +58,11 @@ Vue.use(Breadcrumb);
 Vue.use(BreadcrumbItem);
 Vue.use(Card);
 Vue.use(Row);
-
-
-
-
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Switch);
+Vue.use(Tooltip);
+Vue.use(Pagination);
 
 // 全局挂载message组件,message与通知组件,需要全局挂载
 Vue.prototype.$message = Message;
