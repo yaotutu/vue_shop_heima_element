@@ -79,10 +79,11 @@
       </el-pagination>
     </el-card>
     <!-- // ! bug区域 -->
+    <!-- // ! bug 以解决,el-form表单组件用的是:model,而不是v-model -->
     <!--    dialog  对话框-->
     <el-dialog title="请输入用户信息" width="30%" :visible.sync="dialogVisible">
       <!--    用户表单区域 -->
-      <el-form label-width="80px" v-model="addForm" :rules="addFormRules">
+      <el-form label-width="80px" :model="addForm" :rules="addFormRules">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addForm.username"></el-input>
         </el-form-item>
