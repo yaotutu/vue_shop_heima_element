@@ -23,6 +23,7 @@ import {
   Switch,
   Tooltip,
   Pagination,
+  Dialog,
 } from "element-ui";
 import App from "./App.vue";
 import router from "./router";
@@ -32,6 +33,7 @@ import axios from "axios";
 import "./assets/css/global.css";
 // 导入阿里图标
 import "./assets/fonts/iconfont.css";
+import dialog from "element-ui/packages/dialog";
 // 配置axios
 axios.defaults.baseURL = "https://lianghj.top:8888/api/private/v1/";
 axios.interceptors.request.use((config) => {
@@ -63,7 +65,7 @@ Vue.use(TableColumn);
 Vue.use(Switch);
 Vue.use(Tooltip);
 Vue.use(Pagination);
-
+Vue.use(Dialog);
 // 全局挂载message组件,message与通知组件,需要全局挂载
 Vue.prototype.$message = Message;
 

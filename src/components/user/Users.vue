@@ -8,14 +8,21 @@
     <el-card class="box-card">
       <el-row :gutter="100">
         <el-col :span="15">
-          <el-input placeholder="请输入内容">
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            clearable
+            @clear="clearInput"
+          >
             <el-button
               slot="append"
               icon="el-icon-search"
-            ></el-button> </el-input
-        ></el-col>
+              @click="getUserList"
+            ></el-button>
+          </el-input>
+        </el-col>
         <el-col :span="4">
-          <el-button type="primary">添加用户</el-button>
+          <el-button type="primary" @click="addUser">添加用户 </el-button>
         </el-col>
       </el-row>
       <el-table :data="userlist" border>
@@ -71,6 +78,30 @@
       >
       </el-pagination>
     </el-card>
+    <!-- // ! bug区域 -->
+    <!--    dialog  对话框-->
+    <el-dialog title="请输入用户信息" width="30%" :visible.sync="dialogVisible">
+      <!--    用户表单区域 -->
+      <el-form label-width="80px" v-model="addForm" :rules="addFormRules">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="addForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="addForm.password" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input v-model="addForm.mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+          <el-input v-model="addForm.email"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer">
+        <el-button @click="cancelDialog">取 消</el-button>
+        <el-button type="primary">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -86,6 +117,34 @@ export default {
       },
       userlist: [],
       total: 0,
+      searchInfomation: "",
+      dialogVisible: true,
+      addForm: {
+        username: "admin",
+        password: "",
+        email: "",
+        mobile: "666666666666666666666",
+      },
+      addFormRules: {
+        // ! bug区域表单验证不生效
+        username: [
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+        mobile: [
+          {
+            min: 3,
+            max: 10,
+            message: "长度在 3 到 10 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   methods: {
@@ -109,6 +168,20 @@ export default {
       // console.log(e);
       this.queryInfo.pagenum = e;
       this.getUserList();
+    },
+    test() {
+      console.log("haha 我出来了@@@@");
+    },
+    clearInput() {
+      this.queryInfo.query = "";
+      this.getUserList();
+    },
+    addUser() {
+      this.dialogVisible = true;
+    },
+    //关闭dialog
+    cancelDialog() {
+      this.dialogVisible = false;
     },
     async userStateChanged(e) {
       const { data: res } = await this.$http.put(
