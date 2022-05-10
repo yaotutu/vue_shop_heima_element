@@ -81,9 +81,19 @@
     <!-- // ! bug区域 -->
     <!-- // ! bug 以解决,el-form表单组件用的是:model,而不是v-model -->
     <!--    dialog  对话框-->
-    <el-dialog title="请输入用户信息" width="30%" :visible.sync="dialogVisible">
+    <el-dialog
+      title="请输入用户信息"
+      width="30%"
+      :visible.sync="dialogVisible"
+      @close="addDialogClosed"
+    >
       <!--    用户表单区域 -->
-      <el-form label-width="80px" :model="addForm" :rules="addFormRules">
+      <el-form
+        label-width="80px"
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+      >
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addForm.username"></el-input>
         </el-form-item>
@@ -93,14 +103,14 @@
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="addForm.mobile"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item label="邮箱" prop="email">
           <el-input v-model="addForm.email"></el-input>
         </el-form-item>
       </el-form>
 
       <span slot="footer">
         <el-button @click="cancelDialog">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -110,6 +120,18 @@
 export default {
   name: "Users",
   data() {
+    let checkEmail = (rule, value, cb) => {
+      // 自定义规则依然写在addFormRules里面,只是哪里制定了这个函数,当执行到规则哪里的时候,会回来调用这个函数.
+      const regEmail =
+        /^([a-zA-Z\d][\w-]{2,})@(\w{2,})\.([a-z]{2,})(\.[a-z]{2,})?$/;
+      if (regEmail.test(value)) {
+        // 合法邮箱,调用cb
+        return cb();
+      } else {
+        // 邮箱验证不合法
+        cb(new Error(" 请输入合法邮箱"));
+      }
+    };
     return {
       queryInfo: {
         query: "",
@@ -121,10 +143,10 @@ export default {
       searchInfomation: "",
       dialogVisible: true,
       addForm: {
-        username: "admin",
+        username: "",
         password: "",
         email: "",
-        mobile: "666666666666666666666",
+        mobile: "",
       },
       addFormRules: {
         // ! bug区域表单验证不生效
@@ -137,18 +159,15 @@ export default {
             trigger: "blur",
           },
         ],
-        mobile: [
-          {
-            min: 3,
-            max: 10,
-            message: "长度在 3 到 10 个字符",
-            trigger: "blur",
-          },
-        ],
+        email: [{ validator: checkEmail, trigger: "blur" }],
       },
     };
   },
   methods: {
+    addDialogClosed() {
+      // console.log("this.$refs :>> ", this.$refs);
+      this.$refs.addFormRef.resetFields();
+    },
     async getUserList() {
       const { data: res } = await this.$http.get("users", {
         params: this.queryInfo,
@@ -160,8 +179,8 @@ export default {
       this.total = res.data.total;
     },
     handleSizeChange(e) {
-      console.log("分页事件被触发了");
-      console.log("e :>> ", e);
+      // console.log("分页事件被触发了");
+      // console.log("e :>> ", e);
       this.queryInfo.pagesize = e;
       this.getUserList();
     },
@@ -195,6 +214,17 @@ export default {
         return this.$message.error("状态更新失败");
       }
       this.$message.success("状态更新成功");
+    },
+    async addUser() {
+      const { data: res } = await this.$http.post("users", this.addForm);
+      console.log("res :>> ", res);
+      if (res.meta.status !== 201) {
+        this.$message.error("添加失败");
+      } else {
+        this.$message.success("添加成功");
+        this.dialogVisible = false;
+        this.getUserList();
+      }
     },
   },
   created() {
